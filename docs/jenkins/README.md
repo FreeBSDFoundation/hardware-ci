@@ -4,7 +4,7 @@ Jenkins Configuration for FreeBSD HW CI
 
 Objective and Background
 ------------------------
-This post explains how to configure Jenkins for the FreeBSD Hardware CI Lab. The work done here is based on earlier work using an Intel NUC and Rasberry PI <sup>[1](#LwhsuTestbedGit),[2](#RPITestbed)</sup>  along with work pioneered by the main Continuous Integration server, https://ci.freebsd.org/<sup>[3](#JenkinsWiki),[4](#JenkinsSetupWiki),[5](#LwhsuCIGit),[6](#FreeBSDCIGit)</sup>.
+This post explains how to configure Jenkins for the FreeBSD Hardware CI Lab. The work done here is based on earlier work using an Intel NUC and Rasberry PI <sup>[[1]](#LwhsuTestbedGit)[[2]](#RPITestbed)</sup>  along with work pioneered by the main Continuous Integration server, https://ci.freebsd.org/.<sup>[[3]](#JenkinsWiki)[[4]](#JenkinsSetupWiki)[[5]](#LwhsuCIGit)[[6]](#FreeBSDCIGit)</sup>
 
 Pre-requisites
 --------------
@@ -353,15 +353,15 @@ Checking out from SVN should work properly now.
 References
 ----------
 
-<a name="RPITestbed">1</a>: https://ci-dev.freebsd.org/job/rpi3-test/
+<a name="RPITestbed">[1]</a>: https://ci-dev.freebsd.org/job/rpi3-test/
 
-<a name="LwhsuTestbedGit">2</a>: https://github.com/lwhsu/testbed 
+<a name="LwhsuTestbedGit">[2]</a>: https://github.com/lwhsu/testbed 
 
 
-<a name="JenkinsWiki">3</a>: https://wiki.freebsd.org/Jenkins
+<a name="JenkinsWiki">[3]</a>: https://wiki.freebsd.org/Jenkins
 
-<a name="JenkinsSetupWiki">4</a>: https://wiki.freebsd.org/Jenkins/Setup
+<a name="JenkinsSetupWiki">[4]</a>: https://wiki.freebsd.org/Jenkins/Setup
 
-<a name="LwhsuCIGit">5</a>: https://github.com/lwhsu/freebsd-ci
+<a name="LwhsuCIGit">[5]</a>: https://github.com/lwhsu/freebsd-ci
 
-<a name="FreeBSDCIGit">6</a>: https://github.com/freebsd/freebsd-ci
+<a name="FreeBSDCIGit">[6]</a>: https://github.com/freebsd/freebsd-ci
