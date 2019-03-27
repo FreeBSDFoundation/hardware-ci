@@ -53,13 +53,14 @@ Hardware Setup
 --------------
 Below is a schematic of the connection between the components.
  For 12V devices you may need a separate power supply or a step-up voltage regulator.
-:::info
-*Discrepancies:*
-* The image below shows a 4-relay module however the code below uses an 8-relay module. The additional inputs are connected from pins 6 to 9.
-* Additional devices can be attached, but only one is shown below.
-* A DC Barrel power connection (For a Pine A64-LTS) is shown, however, any 5V power connection can be used instead (i.e. Micro-USB or USB power connections).
-:::
-![Schematic of Power Controller](https://i.imgur.com/Jl8nXWD.png)
+> **NOTE**
+>
+> There are some differences between this schematic and what you might implement. Including:
+> * The image below shows a 4-relay module however the code below uses an 8-relay module. The additional inputs are connected from pins 6 to 9.
+> * Additional devices can be attached, but only one is shown below.
+> * A DC Barrel power connection (For a Pine A64-LTS) is shown, however, any 5V power connection can be used instead (i.e. Micro-USB or USB power connections).
+
+![Schematic of Power Controller](devpower_hw_layout.png)
 
 Programming the Arduino
 -----------------------
