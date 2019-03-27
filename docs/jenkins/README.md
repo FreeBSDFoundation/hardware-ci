@@ -4,12 +4,12 @@ Jenkins Configuration for FreeBSD HW CI
 
 Objective and Background
 ------------------------
-This post explains how to configure Jenkins for the FreeBSD Hardware CI Lab. The work done here is based on earlier work using an Intel NUC and Rasberry PI [^LwhsuTestbedGit][^RPITestbed]  along with work pioneered by the main Continuous Integration server, https://ci.freebsd.org/[^JenkinsWiki][^JenkinsSetupWiki][^LwhsuCIGit][^FreeBSDCIGit].
+This post explains how to configure Jenkins for the FreeBSD Hardware CI Lab. The work done here is based on earlier work using an Intel NUC and Rasberry PI <sup>[1](#LwhsuTestbedGit),[2](#RPITestbed)</sup>  along with work pioneered by the main Continuous Integration server, https://ci.freebsd.org/<sup>[3](#JenkinsWiki),[4](#JenkinsSetupWiki),[5](#LwhsuCIGit),[6](#FreeBSDCIGit)</sup>.
 
 Pre-requisites
 --------------
- * [Netbooting Setup](/KIYgugqRSe2UyDNckbqlOg)
- * [Power Controller Setup](/WaraH18ZQK2LgxyFFQxJOA)
+ * [Netbooting Setup](/docs/netboot)
+ * [Power Controller Setup](/docs/devpower)
 
 Tools and Requirements
 ----------------------
@@ -28,7 +28,7 @@ Tools and Requirements
 Jenkins Initial Setup
 ---------------------
 Setup `rc.conf` to enable Jenkins and then start the Jenkins server.
-```shell
+```bash
 sudo sysrc local_unbound_enable=YES
 
 sudo sysrc jenkins_enable=YES
@@ -68,7 +68,7 @@ Jenkins Config Setup
 ### Configure Workspaces
 Create folders for Jenkins to work in.
 
-```shell
+```bash
 sudo mkdir -p /jenkins/jails
 sudo mkdir -p /jenkins/workspace
 chown jenkins:jenkins /jenkins /jenkins/*
@@ -86,7 +86,7 @@ jenkins ALL=(root) NOPASSWD: CI_COMMANDS
 ### Define builds and build configurations
 Clone the [the HW CI repository](https://github.com/GeraldNDA/freebsd-ci) into an easily accessible location. You may want to fork this repository before checking it out.
 
-```shell
+```bash
 git clone https://github.com/GeraldNDA/freebsd-ci
 ```
 :::info
@@ -115,7 +115,7 @@ If the 'master' node is being used, you can also use a local path. This is done 
 :::
 
 To update Jenkins with the configurations, run the following:
-```shell
+```bash
 jenkins-jobs --conf jenkins_jobs.ini update --delete-old .
 ```
 
@@ -154,7 +154,7 @@ Ensure the following configurations are set:
 The following setup is tested on the master machine (that does not use ZFS). If you are using a distributed machine that does use ZFS you may benefit from looking at the steps used in https://wiki.freebsd.org/Jenkins/Setup. These steps should also be applicable on a distributed machine (with Jenkins installed).
 
 First, enable jails:
-```shell
+```bash
 sudo sysrc jail_enable=YES
 sudo service jail start
 ```
@@ -163,7 +163,7 @@ The following tasks should be run as the `jenkins` user:
 `sudo su jenkins`
 
 Load the Jenkins scripts in the `/jenkins` directory
-```shell
+```bash
 cd /jenkins
 git clone https://github.com/GeraldNDA/jenkins-agent-scripts
 cd jenkins-agent-scripts
@@ -172,12 +172,12 @@ cd jenkins-agent-scripts
 Copy `agent.conf.sample` into `agent.conf`. You'll need to update `jenkins_url`, `agentname` and `secret` values to match the value what's given at `<jenkins_url>/computer/${agentname}/`. At this url, you should see "Run from agent command line" which gives a command like this: `java -jar agent.jar -jnlpUrl ${jenkins_url}/computer/${agentname}/agent-agent.jnlp -secret ${secret}`.
 
 Configure the crontab to keep the instance running:
-```shell
+```bash
 crontab crontab
 ```
 
 To start the agent, run 
-```shell
+```bash
 daemon -cf keepalive.sh
 ```
 
@@ -187,7 +187,7 @@ You should see at `<jenkins_url>/computer/${hostname}/` that the node is running
 Modifying Devices
 -----------------
 Given the following `jobs` in `FreeBSD-device-tests` (in `device-test.yaml`)
-```
+```yaml
   - 'FreeBSD-{branch}-aarch64-device_tests':
           disable_build: true
           target: arm64
@@ -246,7 +246,7 @@ Let's say you wanted to add another 32-bit device like the `jetsontk1` and anoth
     name: 'FreeBSD-{branch}-amd-device_tests'
     jobs:
       - 'FreeBSD-{branch}-{target_arch}-build_devtest'
-      - 'FreeBSD-device-{branch}-{device_name}-test
+      - 'FreeBSD-device-{branch}-{device_name}-test'
 - job-group:
     name: 'FreeBSD-{branch}-jetsontk1-device_tests'
     jobs:
@@ -257,7 +257,7 @@ Let's say you wanted to add another 32-bit device like the `jetsontk1` and anoth
 Also, add these devices to the `conserver.cf` file so that they can be accessed by the power control and serial scripts. A template `conserver.cf` file is described [here](/WaraH18ZQK2LgxyFFQxJOA).
 
 Additionally, you'll have to add jobs for each of these. At the time of writing the repository includes a sample device specific (beaglebone) and architecture specific (pinea64) build job and test job. Thus it should be sufficient to just copy them. And then follow the steps for modifying tests to ensure they will work. For example:
-```shell
+```bash
 cp -r jobs/FreeBSD-device-head-beaglebone-test jobs/FreeBSD-device-head-jetsontk1-test
 cp -r jobs/FreeBSD-device-head-beaglebone-build_devtest jobs/FreeBSD-device-head-jetsontk1-build_devtest
 
@@ -290,7 +290,7 @@ Each test job depends on the following files:
  - `job/<jobname>/device_tests/tests.py` - the sourced python file for specifying additional tests
 
 Example `job/<jobname>/device_tests/tests.py`:
-```python=
+```python
 # Either (or both) of these lists should be defined. 
 # The lists should be iterables of functions as specified below.
 to_run = []
@@ -327,16 +327,16 @@ Troubleshooting
 ---------------
 ### SVN Checkouts Fail
 In the `<jenkins_home>` directory (i.e. `/usr/local/jenkins`) remove any JNA files. You can use the following to do so.
-```shell
+```bash
 sudo find war -name "*jna*" -exec sudo rm {} +  
 sudo find plugins -name "*jna*" -exec sudo rm {} +  
 ```
 Also delete any lingering workspaces (these may contain lock files which will prevent further checkouts)
-```shell
+```bash
 sudo rm -rf /jenkins/workspace/*
 ```
 And then restart jenkins
-```shell
+```bash
 sudo service jenkins restart
 ```
 Checking out from SVN should work properly now.
@@ -344,10 +344,18 @@ Checking out from SVN should work properly now.
 ### Pkg Fails in Build jobs
 `BUILDER_0_IP4` must be on the same subnet as the ip address used to access the interface. You can use a tool like this: http://meridianoutpost.com/resources/etools/network/two-ips-on-same-network.php to verify that your IP is on the same subnet i.e. if `em0` uses ip address `inet 192.168.32.164 netmask 0xffffff00 broadcast 192.168.32.255` then any address from `192.168.32.1` to `192.168.32.255` would be on the same subnet. Avoid using values at the highest range, because those are usually used as the "broadcast address" and avoid values too low as they are usually used as the "router address".
 
-[^RPITestbed]: https://ci-dev.freebsd.org/job/rpi3-test/
-[^LwhsuTestbedGit]: https://github.com/lwhsu/testbed 
+References
+----------
 
-[^JenkinsWiki]:https://wiki.freebsd.org/Jenkins
-[^JenkinsSetupWiki]: https://wiki.freebsd.org/Jenkins/Setup
-[^LwhsuCIGit]: https://github.com/lwhsu/freebsd-ci
-[^FreeBSDCIGit]: https://github.com/freebsd/freebsd-ci
+<a name="RPITestbed">1</a>: https://ci-dev.freebsd.org/job/rpi3-test/
+
+<a name="LwhsuTestbedGit">2</a>: https://github.com/lwhsu/testbed 
+
+
+<a name="JenkinsWiki">3</a>: https://wiki.freebsd.org/Jenkins
+
+<a name="JenkinsSetupWiki">4</a>: https://wiki.freebsd.org/Jenkins/Setup
+
+<a name="LwhsuCIGit">5</a>: https://github.com/lwhsu/freebsd-ci
+
+<a name="FreeBSDCIGit">6</a>: https://github.com/freebsd/freebsd-ci
