@@ -7,6 +7,13 @@ This is the documentation document about the usage and development of the HW CI 
 
 The HackMD version includes additional (outdated) notes about netbooting various devices.
 
+Contents
+--------
+### Documentation
+- [Building a Arduino Power Controller in FreeBSD](/docs/devpower)
+- [Netbooting Configuration for HW CI Devices](/docs/netboot)
+- [Jenkins Configuration for FreeBSD HW CI](/docs/jenkins)
+
 Credits
 -------
 *in alphabetical order*
@@ -18,9 +25,4 @@ Credits
 - manu
 - Other folks on #bsdmips
 
-Contents
---------
-### Documentation
-- [Building a Arduino Power Controller in FreeBSD](/docs/devpower)
-- [Netbooting Configuration for HW CI Devices](/docs/netboot)
-- [Jenkins Configuration for FreeBSD HW CI](/docs/jenkins)
+
