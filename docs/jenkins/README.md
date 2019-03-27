@@ -89,9 +89,10 @@ Clone the [the HW CI repository](https://github.com/GeraldNDA/freebsd-ci) into a
 ```bash
 git clone https://github.com/GeraldNDA/freebsd-ci
 ```
-:::info
-This repository contains configurations and build scripts used on each build. By default, scripts are cloned from the repository any build that requires it. As a result, if you make any changes don't forget to push them (`git push`) after your commits.
-:::
+> **NOTE**
+> 
+> This repository contains configurations and build scripts used on each build. By default, scripts are cloned from the repository any build that requires it. As a result, if you make any changes don't forget to push them (`git push`) after your commits.
+
 
 #### JJB File Description
  * `default.yaml` defines default definitions for all jobs
@@ -105,14 +106,16 @@ This repository contains configurations and build scripts used on each build. By
 Job configurations are in the `jjb` directory and managed by Jenkins Job Builder (JJB). 
 
 In order to modify any configurations, you should first make a `jenkins_jobs.ini` file by copying the sample. You'll want to change the username to match the username used. As well you can create an API Token for yourself at `<jenkins_url>/user/<username>/configure` and use that as JJB's configured password.
-:::warning
-While you could use your admin password instead of the API Token, it is not suggested to use a plaintext password with JJB for security reasons.
-:::
+> **WARNING**
+> 
+> While you could use your admin password instead of the API Token, it is not suggested to use a plaintext password with JJB for security reasons.
+
 
 If you have forked the repository, you'll want to modify `default.yaml` and change `ci-scripts-git-path` to match the new repo. 
-:::info
-If the 'master' node is being used, you can also use a local path. This is done by modifying `device-template.yaml` and uncommenting the lines `checkout-scripts-local` and commenting out the `checkout-scripts`.
-:::
+> **NOTE**
+> 
+> If the 'master' node is being used, you can also use a local path. This is done by modifying `device-template.yaml` and uncommenting the lines `checkout-scripts-local` and commenting out the `checkout-scripts`.
+
 
 To update Jenkins with the configurations, run the following:
 ```bash
@@ -136,19 +139,22 @@ Ensure the following configurations are set:
  * `Launch method` should be `launch agent via Java Web Start`
  * `Environment Variables` should have the following values:
      * `BUILDER_0_IP4` should be some IP address in the same subnet as the IP address used to access the internet. 
-         :::warning
-         If it isn't defined correctly, `pkg`  will fail when trying to build FreeBSD. 
-         :::
-         :::info
-         Also define  `BUILDER_n_IP4` for every `n`th additional executor. Use `BUILDER_n_IP6` if IP6 IP addresses are used instead.
-         :::
+         > **WARNING**
+         > 
+         > If it isn't defined correctly, `pkg`  will fail when trying to build FreeBSD. 
+
+         > **NOTE**
+         > 
+         > Also define  `BUILDER_n_IP4` for every `n`th additional executor. Use `BUILDER_n_IP6` if IP6 IP addresses are used instead.
+
      * `BUILDER_JFLAG` is the number of cores build jobs should use. Use `syctl kern.smp.cpus` to choose this number.
      * `BUILDER_MEMORY` is the amount of memory build jobs should use (e.g. `8G`). This should be based on the amount of memory the node/computer has.
      * `BUILDER_NETIF` is the network interface the build jails should use. This should match the network interface to the internet (e.g. `em0`)
      * `BUILDER_ZFS_PARENT` is the parent directory of jails. This should be `/jenkins/jails`. The build scripts do not use ZFS.
-         :::info
-         If you are using ZFS you may want to use the jail scripts for: https://github.com/freebsd/freebsd-ci/blob/master/scripts/jail instead of the included ones.
-         :::
+         > **NOTE**
+         > 
+         > If you are using ZFS you may want to use the jail scripts for: https://github.com/freebsd/freebsd-ci/blob/master/scripts/jail instead of the included ones.
+
 
 
 The following setup is tested on the master machine (that does not use ZFS). If you are using a distributed machine that does use ZFS you may benefit from looking at the steps used in https://wiki.freebsd.org/Jenkins/Setup. These steps should also be applicable on a distributed machine (with Jenkins installed).

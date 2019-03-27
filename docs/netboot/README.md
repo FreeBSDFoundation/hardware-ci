@@ -34,22 +34,25 @@ console slot# {
 in which case connection to the device is as simple as using `console <device_name>`.
 
 However, if you don't have a power controller/conserver setup then you can alternatively use `cu -l /dev/cuaU# -115200`. Where `cuaU#` is the device that was added when you plugged in the serial connection.
-:::warning
-If you have permissions issues when using `cu` for the first time, then ensure you are part of the `dialer` group.
-:::
+> **WARNING**
+> 
+> If you have permissions issues when using `cu` for the first time, then ensure you are part of the `dialer` group.
+
 When everything is configured, you'll want to connect to the serial port before powering on the device.
 ### Cross compiling FreeBSD
 While this isn't required for any given device, it is helpful to have a FreeBSD compiled and ready to install once everything is set up. Ultimately, this will be handled by Jenkins. 
 
-:::info
-This flow is based on the one that Jenkins uses. It is nice if you don't already know where you are going to be installing the files. If you do know you may want to look into using `make installworld distribution installkernel` instead of using the release folder.
-:::
+> **NOTE**
+> 
+> This flow is based on the one that Jenkins uses. It is nice if you don't already know where you are going to be installing the files. If you do know you may want to look into using `make installworld distribution installkernel` instead of using the release folder.
+
 
 
 In the project directory (i.e. `/project/<device_name>`), download FreeBSD using Git or SVN:
-:::info
-The below commands download FreeBSD-CURRENT but you may want to get a more stable build for initial testing.
-:::
+> **NOTE**
+> 
+> The below commands download FreeBSD-CURRENT but you may want to get a more stable build for initial testing.
+
 ```bash
 git checkout https://github.com/freebsd/freebsd/ src 
 ```
@@ -59,9 +62,10 @@ svnlite checkout https://svn.freebsd.org/base/head/ src
 ```
 
 let's say you want to add a new `arm64` device. These devices can all use the `GENERIC` kernel configuration (unlike some `arm` devices). However, since we need to netboot it, you'll need to create an NFS configuration. Save this file under `src/sys/<target_arch>/conf`.
-:::info
-In the case where you need to use a device specific config (i.e. `BEAGLEBONE` you can simply replace `GENERIC` with desired kernel configuration name).
-:::
+> **NOTE**
+> 
+> In the case where you need to use a device specific config (i.e. `BEAGLEBONE` you can simply replace `GENERIC` with desired kernel configuration name).
+
 ```
 #
 # GENERIC-NFS -- Extends GENERIC to include NFS support
@@ -83,9 +87,10 @@ options BOOTP_NFSV3
 #options BOOTP_WIRED_TO=ue1
 ```
 
-:::info
-More information about the options used to enable NFS support can be found in `sys/conf/NOTES`
-:::
+> **NOTE**
+> 
+> More information about the options used to enable NFS support can be found in `sys/conf/NOTES`
+
 
 Then cross build FreeBSD you can run the following in the project directory (i.e. `/project/<device_name>`):
 
@@ -157,9 +162,10 @@ You should see something like `Received ## bytes during #.# seconds in # blocks`
 ### Configuring the DHCP Server
 You'll want to create a DHCP configuration. As below is a sample that adds three devices (on IPs `10.0.0.10` to `10.0.0.12`) and connects them to the local TFTP server (running at `10.0.0.1`). The following `/usr/local/etc/dhcpd.conf` should work out of the box, and all adding ~250 devices (which is probably a lot more than you'd need) on the addresses `10.0.0.2` to `10.0.0.254`.
 
-:::info
-More information about DHCPD configurations can be found in [the handbook](https://www.freebsd.org/doc/en/books/handbook/network-dhcp.html)
-:::
+> **NOTE**
+> 
+> More information about DHCPD configurations can be found in [the handbook](https://www.freebsd.org/doc/en/books/handbook/network-dhcp.html)
+
 
 ```
 # dhcpd.conf
@@ -204,9 +210,10 @@ group {
 
 `subnet <subnet_id> netmask <netmask>`
 :  Create a subnet with the id `<subnet_id>` and will include addresses based on `<netmask>`. You can determine how many addresses are included in the subnet by using. 
-   :::info
-   You can use calculator tools like [this](http://www.subnet-calculator.com/) to see which range of addresses the subnet makes available. In my case, I was using "Network Class A" with 254 "Hosts per subnet". Note that the TFTP server also counts as a host, so this will allow you to add up to 253 devices.
-   :::
+   > **NOTE**
+   > 
+   > You can use calculator tools like [this](http://www.subnet-calculator.com/) to see which range of addresses the subnet makes available. In my case, I was using "Network Class A" with 254 "Hosts per subnet". Note that the TFTP server also counts as a host, so this will allow you to add up to 253 devices.
+
 
 `group`
 :  Allows you to define options for a group of hosts/subnets. Saves you typing.
@@ -234,9 +241,10 @@ group {
 
 `option root-path`
 :  Provides the `NFS` root directory to use for this device. This is where FreeBSD should be installed. From here on, this will be referred to as `$NFSROOTDIR`. For simplicity, this directory should be under the `$TFTPROOT` chosen earlier.
-    :::info
-    The default scripts expect `$NFSROOTDIR` to be `$TFTPROOT/$DEVICE/install`
-    :::
+    > **NOTE**
+    > 
+    > The default scripts expect `$NFSROOTDIR` to be `$TFTPROOT/$DEVICE/install`
+
 
 
 To start the dhcp service run the following
@@ -251,9 +259,10 @@ You'll need a `/etc/exports` file to expose the NFS directories. Since all files
 ```
 /b -alldirs -maproot=root
 ```
-:::info
-The [manpage](https://www.freebsd.org/cgi/man.cgi?query=exports&sektion=5) for `exports(5)` is helpful if you want more granular options such as limiting only certain IPs (devices) to use certain NFS directories and additionally making them read-only.
-:::
+> **NOTE**
+> 
+> The [manpage](https://www.freebsd.org/cgi/man.cgi?query=exports&sektion=5) for `exports(5)` is helpful if you want more granular options such as limiting only certain IPs (devices) to use certain NFS directories and additionally making them read-only.
+
 
 
 Run the following to enable and start the NFS service and its dependencies:
@@ -310,9 +319,10 @@ For devices that have u-boot preinstalled, you'll need to ensure `bootefi` is an
 ```bash
 setenv bootcmd_dhcp <any_initializatin_commands>\; if dhcp ${kernel_addr_r}\; then tftpboot ${fdt_addr_r} dtb/${fdt_file}\; if fdt addr ${fdt_addr_r}\; then bootefi ${kernel_addr_r} ${fdt_addr_r}\; fi\;  fi\;
 ```
-:::warning
-Before changing this variable permanently (using `saveenv`) you may want to verify that any initialization that is normally done in this command (i.e. `usb start`) is still included.
-:::
+> **WARNING**
+> 
+> Before changing this variable permanently (using `saveenv`) you may want to verify that any initialization that is normally done in this command (i.e. `usb start`) is still included.
+
 
 
 If you're device does not have u-boot preinstalled or it doesn't have the `bootefi` command you'll need to update u-boot. This is different depending on the device, however, you'll probably won't have to recompile it. The new version of u-boot should be available from ports or packages at `sysutils/u-boot-<device_name>`. If so, the files needed for installing u-boot will be available in `/usr/local/share/u-boot/u-boot-<device_name>`.
@@ -321,6 +331,7 @@ The default u-boot installation is very likely to try `dhcp` booting last which 
 ```bash
 setenv boot_targets dhcp $boot_targets
 ```
-:::warning
-After changing any environment variables use `saveenv` to make it permanent (after reboot). Use with care!
-:::
+> **WARNING**
+> 
+> After changing any environment variables use `saveenv` to make it permanent (after reboot). Use with care!
+

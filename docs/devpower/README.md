@@ -37,9 +37,10 @@ All required code is available in the Github repository: https://github.com/Gera
  * Python 3 (`lang/python3`)
      * Used for the power controller server and client
  * Conserver (`comms/conserver-com`)
-     :::danger
-     DO NOT install `comms/conserver` it is an older version.
-     :::
+     > **DANGER**
+     > 
+     > DO NOT install `comms/conserver` it is an older version.
+
      * This is used instead of `comms/py-serial` in order to alias the ports and to allow use over the network. If you do not need either of these features, you can modify the scripts to use that interface instead. See [pySerial Documentation](https://pyserial.readthedocs.io/) for more information.
  * Pexpect `misc/py-pexpect`
      * Used to interface with the conserver. `lang/expect` is another good option but requires using TCL.
@@ -65,9 +66,10 @@ Below is a schematic of the connection between the components.
 Programming the Arduino
 -----------------------
 The code required to program the Arduino is available [here](https://github.com/GeraldNDA/devpowerd/blob/master/ci_relay_controller.ino)
-:::info
-The majority of the help text is unnecessary (i.e. `device_list` and print outs) but can be helpful for verifying that the serial port used is indeed the power controller or for manually testing the arduino code. Additionally, the use of `EOT` in the script below is not necessary as it mostly is helpful when the serial port is interfaced directly (i.e. using pySerial).
-:::
+> **NOTE**
+> 
+> The majority of the help text is unnecessary (i.e. `device_list` and print outs) but can be helpful for verifying that the serial port used is indeed the power controller or for manually testing the arduino code. Additionally, the use of `EOT` in the script below is not necessary as it mostly is helpful when the serial port is interfaced directly (i.e. using pySerial).
+
 
 You should be able to program this code directly to the Arduino.
 
@@ -85,16 +87,17 @@ Additional Tips:
  * Building `conserver` manually from source allows you to specify a different default `master`. If you do so, then you don't need to run conserver (or use a `conserver.cf`) on the remote computer.
 
 Additionally, you'll want to create `/usr/local/etc/conserver.passwd` with the following contents to allow yourself and the root user to access the console without logging in.
-:::info
-You'll also want to add the `jenkins` user for use in the HW CI system. This only needs to be done on the computer where Jenkins is running.
-:::
-```=
+> **NOTE**
+> 
+> You'll also want to add the `jenkins` user for use in the HW CI system. This only needs to be done on the computer where Jenkins is running.
+
+```
 root:
 <your_username>:
 ```
 
 To enable and start the conserver run the following:
-```shell
+```bash
 sudo sysrc conserver_enable=YES
 sudo service conserver start
 ```
@@ -111,9 +114,10 @@ Make sure to run `sudo chmod +x /usr/local/devpowerd/devpowerd.py` so that it ca
 
 The serial interface script is available [here](https://github.com/GeraldNDA/devpowerd/blob/master/devpowerserial.py). This script can be run from the command line but can also provide a python interface to the serial controller(s).
 
-:::warning
-At the time of writing, you must specify the "master" computer (with the physical serial connections attached) for it to work correctly. This script manages translating the device name to a slot number by checking `console -x` however  This is not a concern if everything is running on the localhost.
-:::
+> **WARNING**
+> 
+> At the time of writing, you must specify the "master" computer (with the physical serial connections attached) for it to work correctly. This script manages translating the device name to a slot number by checking `console -x` however  This is not a concern if everything is running on the localhost.
+
 
 After translating the device name to a slot number, it will send the command and device number to the Arduino and verify the response.
 
@@ -126,7 +130,7 @@ Create a `/usr/local/etc/rc.d/devpowerd` by copying in [this file](https://githu
 Again, this script requires a `chmod +x`
 
 To enable and run this daemon, run the following:
-```shell
+```bash
 sudo sysrc devpowerd_enable=YES
 sudo service devpowerd start
 ```
@@ -138,7 +142,7 @@ This script also requires a `chmod +x`
 
 In order to run this script easier, it should be added to the PATH. An easy way to do this is
 to add a symbolic link to it in `/usr/local/bin`
-```shell
+```bash
 ln -s /usr/local/devpower/devpowerctl.py /usr/local/bin/devpowerctl
 ```
 
