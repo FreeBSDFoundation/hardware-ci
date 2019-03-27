@@ -1,6 +1,7 @@
 FreeBSD Hardware CI Lab Docs
 =============================
 Originally written in HackMD: https://hackmd.io/c/ByoFyXluN
+
 About
 -----
 This is the documentation document about the usage and development of the HW CI Lab
@@ -24,5 +25,3 @@ Credits
 - lwhsu
 - manu
 - Other folks on #bsdmips
-
-
