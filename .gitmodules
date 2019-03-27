@@ -1,0 +1,6 @@
+[submodule "freebsd-ci"]
+	path = freebsd-ci
+	url = https://github.com/GeraldNDA/freebsd-ci
+[submodule "devpowerd"]
+	path = devpowerd
+	url = https://github.com/GeraldNDA/devpowerd
