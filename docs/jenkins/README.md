@@ -306,19 +306,18 @@ def example_test(ch):
     # ch is the console handler
     # before running this function, the device has already been logged into.
     # ch->timeout is the boot timeout (default 5 minutes) otherwise every expect timeout is 1 minute.
-    # ch->console is the Pexpect instance for running commands
-    # ch-> device is the device instance. 
+    # ch->console is the Pexpect instance for running commands (see Pexpect.spawn documentation for more info)
+    # ch->device is the device instance. 
     # ch->device->name is the device name
     # ch->device->turn_on/turn_off are methods for controlling the power to the device.
     # ch->CMDLINE_RE is the regex for the commandline
-    ch.sendline("ls /")
-    ch.expect(ch.CMDLINE_RE)
-    ch.sendline("dmesg")
-    
+    ch.console.sendline("ls /")
+    ch.console.expect(ch.CMDLINE_RE)
+    ch.console.sendline("dmesg")
 
 def bt_on_panic(ch):
     # before running this function, the device panicked during boot
-    ch.sendline("bt")
+    ch.console.sendline("bt")
 
 # You can add multiple functions to either list. The will be run in the order of the list. 
 to_run.append(example_test)
@@ -332,6 +331,10 @@ You can specify additional tests to run after logging in or after a panic occurs
 Troubleshooting
 ---------------
 ### SVN Checkouts Fail
+> **NOTE**
+>
+> [Patches to this issue](https://issues.tmatesoft.com/issue/SVNKIT-740) have been submitted and it should be resolved soon.
+
 In the `<jenkins_home>` directory (i.e. `/usr/local/jenkins`) remove any JNA files. You can use the following to do so.
 ```bash
 sudo find war -name "*jna*" -exec sudo rm {} +  
