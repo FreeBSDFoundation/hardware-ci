@@ -302,18 +302,48 @@ Example `job/<jobname>/device_tests/tests.py`:
 to_run = []
 panic_actions = []
 
-def example_test(ch):
-    # ch is the console handler
-    # before running this function, the device has already been logged into.
-    # ch->timeout is the boot timeout (default 5 minutes) otherwise every expect timeout is 1 minute.
-    # ch->console is the Pexpect instance for running commands (see Pexpect.spawn documentation for more info)
-    # ch->device is the device instance. 
-    # ch->device->name is the device name
-    # ch->device->turn_on/turn_off are methods for controlling the power to the device.
-    # ch->CMDLINE_RE is the regex for the commandline
-    ch.console.sendline("ls /")
+class TestError(Exception):
+    pass
+    
+def check_status(ch, msg):
+    res = ch.expect(["0", r"\d+"])
+    if res == 1:
+        raise TestFailure(f"Failed to do task '{msg}'")
     ch.console.expect(ch.CMDLINE_RE)
-    ch.console.sendline("dmesg")
+
+def example_test(ch):
+    """
+    `ch` is the console handler
+     - before running this function, the device has already been booted and logged into.
+    
+    `ch.timeout` is the boot timeout 
+    - default value is 5 minutes, otherwise every expect timeout is 1 minute.
+    
+    `ch.console` is the Pexpect instance for running commands 
+     - see Pexpect.spawn documentation for more info
+    
+    `ch.device` is the device instance. 
+    
+    `ch.device.name` is the device name
+
+    `ch.device.turn_on/turn_off` are methods for controlling the power to the device.
+
+    `ch.CMDLINE_RE` is the regex that matches the command line PS1
+    """
+    
+    try:
+        ch.console.sendline("ls /")
+        ch.console.expect(ch.CMDLINE_RE)
+        check_status(ch, "Look for files at root")
+        
+        ch.console.sendline("dmesg")
+        ch.console.expect(ch.CMDLINE_RE)
+        check_status(ch, "Check boot messages")
+        
+    except TestFailure as e:
+        return (False, str(e))
+    # Can return (status, message) or nothing.
+    # return (True, "All's good!")
 
 def bt_on_panic(ch):
     # before running this function, the device panicked during boot
